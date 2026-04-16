@@ -1,0 +1,54 @@
+# QMD Configuration for LLM Wiki
+# This file configures QMD to index and search the wiki directory
+
+collections:
+  wiki:
+    path: ./wiki
+    pattern: "**/*.md"
+    description: "LLM Wiki knowledge base - structured markdown files with entities, concepts, systems, and analyses"
+  
+  raw-documents:
+    path: ./raw/documents
+    pattern: "**/*.md"
+    description: "Source documents - original articles, papers, and design documents"
+  
+  raw-codebases:
+    path: ./raw/codebases
+    pattern: "**/*.{md,ts,js,py,go,rs,java}"
+    description: "Source codebases - code files with documentation"
+
+# Global context for all collections
+global_context: "LLM Wiki - A persistent knowledge management system with structured markdown pages"
+
+# Path-specific contexts for better search relevance
+path_contexts:
+  - path: "wiki/entities"
+    context: "Entity pages - people, organizations, and places"
+  - path: "wiki/concepts"
+    context: "Concept pages - theories, methods, and technologies"
+  - path: "wiki/systems"
+    context: "System pages - software system overviews and architectures"
+  - path: "wiki/components"
+    context: "Component pages - system modules and components"
+  - path: "wiki/services"
+    context: "Service pages - APIs and services"
+  - path: "wiki/data-models"
+    context: "Data model pages - entities and table structures"
+  - path: "wiki/dependencies"
+    context: "Dependency pages - dependency management and relationships"
+  - path: "wiki/architectures"
+    context: "Architecture pages - system designs and diagrams"
+  - path: "wiki/sources"
+    context: "Source document summaries - extracted key information"
+  - path: "wiki/analyses"
+    context: "Analysis pages - comparisons and query results"
+
+# Embedding model configuration
+# Use Qwen3-Embedding for better multilingual support (including Chinese)
+embedding_model: "hf:Qwen/Qwen3-Embedding-0.6B-GGUF/Qwen3-Embedding-0.6B-Q8_0.gguf"
+
+# Chunking strategy
+chunk_strategy: "auto"  # Use AST-aware chunking for code files
+
+# Editor URI template for clickable links
+editor_uri: "vscode://file/{path}:{line}:{col}"

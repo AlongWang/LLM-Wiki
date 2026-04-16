@@ -1,0 +1,177 @@
+' ArchiMate 3.2 标准库
+' 用于 PlantUML 的 ArchiMate 图表定义
+
+' ============================================
+' 业务层元素 (Business Layer Elements)
+' ============================================
+
+!define Business_Process(e, n) rectangle "<$businessprocess>\nn" as e
+!define Business_Service(e, n) rectangle "<$businessservice>\nn" as e
+!define Business_Object(e, n) rectangle "<$businessobject>\nn" as e
+!define Business_Event(e, n) rectangle "<$businessevent>\nn" as e
+!define Business_Function(e, n) rectangle "<$businessfunction>\nn" as e
+!define Business_Interaction(e, n) rectangle "<$businessinteraction>\nn" as e
+!define Business_Actor(e, n) rectangle "<$businessactor>\nn" as e
+!define Business_Role(e, n) rectangle "<$businessrole>\nn" as e
+!define Business_Collaboration(e, n) rectangle "<$businesscollaboration>\nn" as e
+!define Business_Interface(e, n) rectangle "<$businessinterface>\nn" as e
+!define Product(e, n) rectangle "<$product>\nn" as e
+!define Contract(e, n) rectangle "<$contract>\nn" as e
+!define Representation(e, n) rectangle "<$representation>\nn" as e
+
+' ============================================
+' 应用层元素 (Application Layer Elements)
+' ============================================
+
+!define Application_Component(e, n) rectangle "<$applicationcomponent>\nn" as e
+!define Application_Service(e, n) rectangle "<$applicationservice>\nn" as e
+!define Application_Interface(e, n) rectangle "<$applicationinterface>\nn" as e
+!define Application_Function(e, n) rectangle "<$applicationfunction>\nn" as e
+!define Application_Interaction(e, n) rectangle "<$applicationinteraction>\nn" as e
+!define Application_DataObject(e, n) rectangle "<$dataobject>\nn" as e
+!define Application_Process(e, n) rectangle "<$applicationprocess>\nn" as e
+!define Application_Event(e, n) rectangle "<$applicationevent>\nn" as e
+
+' ============================================
+' 技术层元素 (Technology Layer Elements)
+' ============================================
+
+!define Technology_Node(e, n) rectangle "<$node>\nn" as e
+!define Technology_Device(e, n) rectangle "<$device>\nn" as e
+!define Technology_System_Software(e, n) rectangle "<$systemsoftware>\nn" as e
+!define Technology_Service(e, n) rectangle "<$technologyservice>\nn" as e
+!define Technology_Interface(e, n) rectangle "<$technologyinterface>\nn" as e
+!define Technology_Network(e, n) rectangle "<$network>\nn" as e
+!define Technology_Function(e, n) rectangle "<$technologyfunction>\nn" as e
+!define Technology_Process(e, n) rectangle "<$technologyprocess>\nn" as e
+!define Technology_Event(e, n) rectangle "<$technologyevent>\nn" as e
+!define Technology_Artifact(e, n) rectangle "<$artifact>\nn" as e
+!define Technology_CommunicationPath(e, n) rectangle "<$communicationpath>\nn" as e
+
+' ============================================
+' 战略层元素 (Strategy Layer Elements)
+' ============================================
+
+!define Resource(e, n) rectangle "<$resource>\nn" as e
+!define Capability(e, n) rectangle "<$capability>\nn" as e
+!define CourseOfAction(e, n) rectangle "<$courseofaction>\nn" as e
+
+' ============================================
+' 动机元素 (Motivation Elements)
+' ============================================
+
+!define Stakeholder(e, n) rectangle "<$stakeholder>\nn" as e
+!define Driver(e, n) rectangle "<$driver>\nn" as e
+!define Assessment(e, n) rectangle "<$assessment>\nn" as e
+!define Goal(e, n) rectangle "<$goal>\nn" as e
+!define Outcome(e, n) rectangle "<$outcome>\nn" as e
+!define Requirement(e, n) rectangle "<$requirement>\nn" as e
+!define Constraint(e, n) rectangle "<$constraint>\nn" as e
+!define Meaning(e, n) rectangle "<$meaning>\nn" as e
+!define Value(e, n) rectangle "<$value>\nn" as e
+
+' ============================================
+' 关系类型 (Relationships)
+' ============================================
+
+' 结构关系 (Structural Relationships)
+!define Composition_Rel(s, t, l) s *-down- t : l
+!define Aggregation_Rel(s, t, l) s o-down- t : l
+!define Assignment_Rel(s, t, l) s -down-> t : <<assignment>>\nl
+!define Realization_Rel(s, t, l) s -up-> t : <<realize>>\nl
+
+' 依赖关系 (Dependency Relationships)
+!define Serving_Rel(s, t, l) s -down-> t : <<serving>>\nl
+!define Access_Rel(s, t, l) s -down-> t : <<access>>\nl
+!define Influence_Rel(s, t, l) s -down-> t : <<influence>>\nl
+
+' 动态关系 (Dynamic Relationships)
+!define Triggering_Rel(s, t, l) s -down-> t : <<trigger>>\nl
+!define Flow_Rel(s, t, l) s -down-> t : <<flow>>\nl
+
+' 其他关系 (Other Relationships)
+!define Specialization_Rel(s, t, l) s -up-|> t : l
+!define Association_Rel(s, t, l) s -down-> t : l
+
+' ============================================
+' 标准图标 (Standard Icons)
+' 使用 PlantUML 标准库中的图标
+' ============================================
+
+!define $businessprocess <&briefcase>
+!define $businessservice <&cog>
+!define $businessobject <&file>
+!define $businessevent <&bolt>
+!define $businessfunction <&wrench>
+!define $businessinteraction <&exchange>
+!define $businessactor <&user>
+!define $businessrole <&id-badge>
+!define $businesscollaboration <&users>
+!define $businessinterface <&link>
+!define $product <&box>
+!define $contract <&file-contract>
+!define $representation <&presentation>
+
+!define $applicationcomponent <&layers>
+!define $applicationservice <&cog>
+!define $applicationinterface <&link>
+!define $applicationfunction <&wrench>
+!define $applicationinteraction <&exchange>
+!define $dataobject <&database>
+!define $applicationprocess <&cogs>
+!define $applicationevent <&bolt>
+
+!define $node <&server>
+!define $device <&hdd>
+!define $systemsoftware <&cogs>
+!define $technologyservice <&cloud>
+!define $technologyinterface <&plug>
+!define $network <&globe>
+!define $technologyfunction <&wrench>
+!define $technologyprocess <&cogs>
+!define $technologyevent <&bolt>
+!define $artifact <&file-code>
+!define $communicationpath <&route>
+
+!define $resource <&cube>
+!define $capability <&star>
+!define $courseofaction <&compass>
+
+!define $stakeholder <&user-tie>
+!define $driver <&car>
+!define $assessment <&chart-bar>
+!define $goal <&bullseye>
+!define $outcome <&flag-checkered>
+!define $requirement <&clipboard-list>
+!define $constraint <&lock>
+!define $meaning <&lightbulb>
+!define $value <&diamond>
+
+' ============================================
+' 颜色定义 (Color Definitions)
+' ============================================
+
+!$BUSINESS_COLOR = "#ffffcc"
+!$APPLICATION_COLOR = "#cce5ff"
+!$TECHNOLOGY_COLOR = "#ccffcc"
+!$STRATEGY_COLOR = "#ffcccc"
+!$MOTIVATION_COLOR = "#ffccff"
+
+' ============================================
+' 使用示例 (Usage Examples)
+' ============================================
+
+' 业务层示例:
+' Business_Process(BP1, "下单流程")
+' Business_Service(BS1, "订单服务")
+' Triggering_Rel(BP1, BS1, "")
+
+' 应用层示例:
+' Application_Component(AC1, "订单服务")
+' Application_Service(AS1, "创建订单")
+' Assignment_Rel(AC1, AS1, "")
+
+' 技术层示例:
+' Technology_Node(TN1, "服务器")
+' Technology_Service(TS1, "容器服务")
+' Realization_Rel(TN1, TS1, "")

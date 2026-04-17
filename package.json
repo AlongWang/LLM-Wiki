@@ -1,0 +1,14 @@
+{
+  "name": "llm-wiki",
+  "version": "0.1.0",
+  "private": true,
+  "description": "LLM Wiki repository bootstrap and local tooling scripts",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "init:repo": "node scripts/init-repo.js",
+    "init:repo:skip-qmd": "node scripts/init-repo.js --skip-qmd",
+    "setup:qmd": "node scripts/setup-qmd.js"
+  }
+}

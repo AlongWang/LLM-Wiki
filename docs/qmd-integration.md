@@ -13,6 +13,20 @@ All models run locally via node-llama-cpp with GGUF models, ensuring data privac
 
 ## Installation
 
+### Recommended Repository Bootstrap
+
+From the repository root, initialize the directory structure and QMD in one step:
+
+```bash
+npm run init:repo
+```
+
+If you only want the repository skeleton without QMD setup:
+
+```bash
+npm run init:repo:skip-qmd
+```
+
 ### Prerequisites
 
 - Node.js >= 22 or Bun >= 1.0.0
@@ -71,6 +85,14 @@ global_context: "LLM Wiki - A persistent knowledge management system"
 ```
 
 ### Initialize Collections
+
+Recommended:
+
+```bash
+npm run setup:qmd
+```
+
+Manual equivalent:
 
 ```bash
 # Add wiki collection
@@ -196,6 +218,16 @@ qmd mcp stop
 ```
 
 Point any MCP client at `http://localhost:8181/mcp` to connect.
+
+## AI Prompt For Repository Initialization
+
+This repository also includes a reusable prompt file for AI assistants:
+
+```text
+prompts/init-repo.prompt.md
+```
+
+Use it when you want an agent to read the repository instructions, execute `npm run init:repo`, and verify that QMD is working.
 
 ### Available MCP Tools
 

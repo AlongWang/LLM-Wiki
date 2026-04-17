@@ -19,6 +19,7 @@ llm-wiki/
 ├── AGENTS.md                    # Agent 配置文件
 ├── README.md                    # 本文件
 ├── llm-wiki.md                  # 原始设计文档
+├── prompts/                     # 可复用的 AI prompt 文件
 │
 ├── .claude/skills/              # 技能目录
 │   ├── ingest-source/           # 摄取源文档
@@ -50,6 +51,26 @@ llm-wiki/
 ```
 
 ## 🚀 快速开始
+
+### 0. 初始化仓库
+
+新用户建议先运行统一初始化脚本：
+
+```bash
+npm run init:repo
+```
+
+如果你暂时不想安装 QMD，只初始化目录骨架：
+
+```bash
+npm run init:repo:skip-qmd
+```
+
+如果你想让 AI 代为执行初始化，可以直接让 AI 读取并执行：
+
+```text
+prompts/init-repo.prompt.md
+```
 
 ### 1. 摄取源文档
 
@@ -185,14 +206,11 @@ bun install -g @tobilu/qmd
 #### 初始化索引
 
 ```bash
-# 添加 wiki 集合
-qmd collection add ./wiki --name wiki
+# 推荐：统一初始化仓库并配置 QMD
+npm run init:repo
 
-# 生成向量嵌入
-qmd embed
-
-# 查询
-qmd query "订单系统架构"
+# 或仅执行 QMD 配置
+npm run setup:qmd
 ```
 
 #### MCP 集成
@@ -236,6 +254,12 @@ Wiki 是纯 markdown 文件，天然支持 Git：
 - 将源文档放在 `raw/documents/` 目录
 - 源文档不可变，LLM 只读不写
 - 图片等资源放在 `raw/assets/` 目录
+
+### 仓库初始化
+
+- 新用户优先运行 `npm run init:repo`
+- 如果只想创建目录，不初始化 QMD，使用 `npm run init:repo:skip-qmd`
+- 需要让 AI 代为执行时，可使用 `prompts/init-repo.prompt.md`
 
 ### Wiki 维护
 
@@ -324,4 +348,4 @@ MIT License
 
 ---
 
-**开始使用**: 将源文档放入 `raw/documents/` 或代码库放入 `raw/codebases/`，然后使用 `/ingest-source` 或 `/ingest-codebase` 技能开始构建你的知识库！
+**开始使用**: 先运行 `npm run init:repo`，再将源文档放入 `raw/documents/` 或代码库放入 `raw/codebases/`，然后使用 `/ingest-source` 或 `/ingest-codebase` 技能开始构建你的知识库！

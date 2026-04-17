@@ -33,14 +33,40 @@ user-invocable: true
 
 ### 2. 搜索相关页面
 
-#### 2.1 读取索引
+优先使用 QMD 检索，只有在 QMD 不可用或结果不足时才回退到手工读取索引。
+
+#### 2.1 使用 QMD 初筛
+
+按查询复杂度选择命令：
+
+- **关键词明确**：`qmd search "{query}" -c wiki`
+- **语义查询**：`qmd vsearch "{query}" -c wiki`
+- **综合查询**：`qmd query --json "{query}" -n 10 -c wiki`
+
+如果需要让 LLM 处理打分、片段和路径，优先使用 JSON 输出：
+
+```bash
+qmd query --json "订单系统架构" -n 10 -c wiki
+qmd query --json --explain "订单系统架构" -n 10 -c wiki
+```
+
+#### 2.2 按路径批量取回文档
+
+根据 QMD 返回的路径，批量读取候选文档：
+
+```bash
+qmd multi-get "wiki/systems/**/*.md,wiki/components/**/*.md"
+qmd get "qmd://wiki/systems/order-service/order-service.md"
+```
+
+#### 2.3 回退到索引
 
 ```
 读取 wiki/index.md
 识别相关的页面类别
 ```
 
-#### 2.2 关键词匹配
+#### 2.4 关键词匹配
 
 从查询中提取关键词：
 
@@ -50,7 +76,7 @@ user-invocable: true
 - 组件名称
 - 服务名称
 
-#### 2.3 定位相关页面
+#### 2.5 定位相关页面
 
 根据关键词在索引中查找：
 
@@ -79,6 +105,8 @@ user-invocable: true
 读取 wiki/systems/order-service/order-service.md
 ...
 ```
+
+如果 QMD 已返回候选页，优先读取分数最高的前 5 到 10 个页面，避免无差别全量扫描。
 
 ### 4. 综合答案
 
@@ -194,11 +222,12 @@ query: 原始查询
 
 ## 注意事项
 
-1. **优先使用索引**: 先读索引再读具体页面，提高效率
+1. **优先使用 QMD**: 先用 `qmd query/search/vsearch` 初筛，再读具体页面
 2. **添加引用**: 每个事实都应有引用
 3. **标注置信度**: 不确定的信息要明确标注
 4. **检测矛盾**: 如果信息矛盾，明确指出
 5. **保存有价值的答案**: 避免重复查询
+6. **结果不足时回退**: QMD 结果为空时，再读取 `wiki/index.md` 手工扩展候选页
 
 ## 高级功能
 

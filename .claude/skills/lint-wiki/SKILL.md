@@ -18,6 +18,8 @@ user-invocable: true
 
 ## 检查项目
 
+执行 lint 时，优先利用 QMD 做全库检索、相似度聚类和候选页面筛选，再结合页面内容做规则判断。
+
 ### 1. 矛盾检测
 
 检测页面间的信息矛盾（详见 [contradiction-detection.md](./references/contradiction-detection.md)）：
@@ -25,6 +27,13 @@ user-invocable: true
 - **事实矛盾**: 同一事实的不同陈述
 - **关系矛盾**: 关系描述的矛盾
 - **时间线矛盾**: 时间线的矛盾
+
+推荐先用 QMD 找相似页面和重复表述：
+
+```bash
+qmd vsearch "GPT-4 发布时间" --min-score 0.7 -c wiki
+qmd search "发布于 2023" --all --files -c wiki
+```
 
 ### 2. 孤儿页面检测
 
@@ -34,6 +43,13 @@ user-invocable: true
 - 统计入站链接数
 - 评估页面价值
 - 建议添加链接或删除
+
+QMD 可用于快速列出特定主题的相关页面，辅助判断页面是否缺少入口：
+
+```bash
+qmd search "订单" --all --files -c wiki
+qmd search "认证" --all --files -c wiki
+```
 
 #### 2.2 入站链接统计
 
@@ -55,12 +71,21 @@ user-invocable: true
 - **失效链接**: 指向不存在页面的链接
 - **缺失双向链接**: 应该相互链接但缺失反向链接
 
+对于“提及但未创建”的概念，可以先用 QMD 搜索出现频率较高的术语，再确认是否已有独立页面。
+
 ### 4. 过时信息检测
 
 检测可能过时的信息：
 
 - **时间标记**: 识别可能过时的陈述
 - **来源时效**: 检查来源的时效性
+
+可用 QMD 搜索年份、版本号、发布日期等时间信号：
+
+```bash
+qmd search "2023" --all -c wiki
+qmd search "deprecated" --all -c wiki
+```
 
 ### 5. 数据完整性检查
 
@@ -136,6 +161,15 @@ user-invocable: true
 - **标签统一**: 统一标签大小写
 - **简单链接**: 添加明显的缺失链接
 
+修复完成后应执行：
+
+```bash
+qmd update
+qmd embed
+```
+
+确保后续查询与质量检查基于最新索引。
+
 ## 示例
 
 详细的检查示例请参考 [examples.md](./references/examples.md)，包括：
@@ -150,6 +184,7 @@ user-invocable: true
 2. **优先级处理**: 先处理高优先级问题
 3. **人工审核**: 自动修复后建议人工审核
 4. **保存报告**: 将报告保存到 `wiki/analyses/` 目录
+5. **先检索后判断**: 优先用 QMD 缩小候选页面集合，避免全库重复扫描
 
 为每个检查项生成详细报告：
 

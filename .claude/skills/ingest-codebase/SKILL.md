@@ -31,6 +31,22 @@ user-invocable: true
 
 提取项目信息：名称、版本、描述、语言、框架、技术栈等。
 
+### 1.1 QMD 预索引（推荐）
+
+如果代码库已经放入 `raw/codebases/`，先刷新索引并生成向量，便于后续做语义检索：
+
+```bash
+qmd update
+qmd embed
+```
+
+对于大型代码库，优先结合 AST-aware chunking：
+
+```bash
+qmd embed --chunk-strategy auto
+qmd vsearch "authentication middleware implementation" -c raw-codebases
+```
+
 ### 2. 架构分析
 
 详细的架构分析规则参考：[architecture-analysis.md](./references/architecture-analysis.md)
@@ -39,6 +55,12 @@ user-invocable: true
 - 目录结构扫描，识别模块和组件
 - 模块职责分析（通过代码结构和命名）
 - 技术栈识别（依赖和框架）
+
+结合 QMD 做定向定位：
+
+- 用 `qmd search` 找显式入口，如 `controller`、`router`、`service`
+- 用 `qmd vsearch` 找语义相关实现，如认证、下单、库存扣减
+- 用 `qmd multi-get` 批量取回候选文件片段，再做结构化归纳
 
 ### 3. 服务/API 分析
 
@@ -60,6 +82,25 @@ user-invocable: true
 - 外部依赖（版本、用途）
 - 内部依赖（模块间调用关系）
 - 运行时和开发依赖分类
+
+可结合以下命令快速做依赖定位：
+
+```bash
+qmd search "package.json dependencies" -c raw-codebases
+qmd search "pom.xml dependency" -c raw-codebases
+qmd vsearch "database model repository" -c raw-codebases
+```
+
+### 6. 写入后刷新索引
+
+生成或更新 wiki 页面后，刷新索引与向量：
+
+```bash
+qmd update
+qmd embed
+```
+
+这样后续 `/query-wiki` 和 `/lint-wiki` 能立即检索到新内容。
 
 ## 生成 Wiki 页面
 
@@ -186,6 +227,7 @@ codebase_path: raw/codebases/{project}
 4. **人工审核**：自动生成的页面需要人工审核和补充
 5. **双向链接**：使用 `[[page-name]]` 语法建立页面间链接
 6. **架构图格式**：ArchiMate 用 PlantUML，其他用 Mermaid
+7. **优先利用检索**：大型代码库不要全量通读，先用 QMD 缩小候选范围
 
 ## 参考文档
 

@@ -9,12 +9,42 @@ const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
+const repoRoot = path.resolve(__dirname, '..');
+
+function runCommand(command, options = {}) {
+  return execSync(command, {
+    cwd: repoRoot,
+    stdio: 'pipe',
+    encoding: 'utf8',
+    ...options,
+  });
+}
+
+function ensureDirectory(dirPath, label) {
+  if (!fs.existsSync(dirPath)) {
+    console.log(`Creating ${label} directory...`);
+    fs.mkdirSync(dirPath, { recursive: true });
+    console.log(`✅ ${label} directory created\n`);
+  }
+}
+
+function getCollectionDetails(name) {
+  try {
+    const output = runCommand(`qmd collection show ${name}`);
+    const currentPath = output.match(/Path:\s+(.+)/)?.[1]?.trim();
+    const currentPattern = output.match(/Pattern:\s+(.+)/)?.[1]?.trim();
+    return { currentPath, currentPattern };
+  } catch (error) {
+    return null;
+  }
+}
+
 console.log('🚀 Setting up QMD for LLM Wiki...\n');
 
 // Check if QMD is installed
 try {
   console.log('Checking QMD installation...');
-  execSync('qmd --version', { stdio: 'inherit' });
+  execSync('qmd --version', { stdio: 'inherit', cwd: repoRoot });
   console.log('✅ QMD is installed\n');
 } catch (error) {
   console.error('❌ QMD is not installed. Please install it first:');
@@ -24,31 +54,27 @@ try {
   process.exit(1);
 }
 
-// Check if wiki directory exists
-const wikiPath = path.join(__dirname, 'wiki');
-if (!fs.existsSync(wikiPath)) {
-  console.log('Creating wiki directory...');
-  fs.mkdirSync(wikiPath, { recursive: true });
-  console.log('✅ Wiki directory created\n');
-}
+ensureDirectory(path.join(repoRoot, 'wiki'), 'wiki');
+ensureDirectory(path.join(repoRoot, 'raw', 'documents'), 'raw/documents');
+ensureDirectory(path.join(repoRoot, 'raw', 'codebases'), 'raw/codebases');
 
 // Initialize collections
 const collections = [
   {
     name: 'wiki',
-    path: './wiki',
+    path: path.join(repoRoot, 'wiki'),
     mask: '**/*.md',
     description: 'LLM Wiki knowledge base - structured markdown files'
   },
   {
     name: 'raw-documents',
-    path: './raw/documents',
+    path: path.join(repoRoot, 'raw', 'documents'),
     mask: '**/*.md',
     description: 'Source documents - original articles, papers, and design documents'
   },
   {
     name: 'raw-codebases',
-    path: './raw/codebases',
+    path: path.join(repoRoot, 'raw', 'codebases'),
     mask: '**/*.{md,ts,js,py,go,rs,java}',
     description: 'Source codebases - code files with documentation'
   }
@@ -57,15 +83,36 @@ const collections = [
 console.log('📦 Initializing collections...\n');
 
 collections.forEach(collection => {
+  const existingCollection = getCollectionDetails(collection.name);
+
   try {
-    console.log(`Adding collection: ${collection.name}`);
-    execSync(`qmd collection add ${collection.path} --name ${collection.name} --mask "${collection.mask}"`, { 
+    if (
+      existingCollection &&
+      existingCollection.currentPath === collection.path &&
+      existingCollection.currentPattern === collection.mask
+    ) {
+      console.log(`Collection "${collection.name}" is already configured correctly\n`);
+      return;
+    }
+
+    if (existingCollection) {
+      console.log(`Updating collection: ${collection.name}`);
+      execSync(`qmd collection remove ${collection.name}`, {
+        stdio: 'inherit',
+        cwd: repoRoot,
+      });
+    } else {
+      console.log(`Adding collection: ${collection.name}`);
+    }
+
+    execSync(`qmd collection add "${collection.path}" --name ${collection.name} --mask "${collection.mask}"`, {
       stdio: 'inherit',
-      cwd: __dirname
+      cwd: repoRoot,
     });
     console.log(`✅ Collection "${collection.name}" added\n`);
   } catch (error) {
-    console.log(`⚠️  Collection "${collection.name}" may already exist, skipping...\n`);
+    console.log(`⚠️  Failed to configure collection "${collection.name}": ${error.message}\n`);
+    process.exitCode = 1;
   }
 });
 
@@ -91,7 +138,7 @@ contexts.forEach(({ path, context }) => {
     console.log(`Adding context for ${path}...`);
     execSync(`qmd context add "${path}" "${context}"`, { 
       stdio: 'inherit',
-      cwd: __dirname
+      cwd: repoRoot
     });
   } catch (error) {
     // Context may already exist, ignore error
@@ -107,7 +154,7 @@ console.log('This may take a while on first run (downloading models ~2GB)...\n')
 try {
   execSync('qmd embed', { 
     stdio: 'inherit',
-    cwd: __dirname
+    cwd: repoRoot
   });
   console.log('\n✅ Embeddings generated\n');
 } catch (error) {
@@ -121,7 +168,7 @@ console.log('📊 Index status:\n');
 try {
   execSync('qmd status', { 
     stdio: 'inherit',
-    cwd: __dirname
+    cwd: repoRoot
   });
 } catch (error) {
   // Ignore error
